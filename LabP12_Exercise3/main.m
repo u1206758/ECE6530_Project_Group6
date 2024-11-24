@@ -36,23 +36,24 @@ n = [0:149];
 x = 5*cos(0.3*pi*n) + 22*cos(0.44*pi*n-pi/3) + 22*cos(0.7*pi*n-pi/4);
 
 %% 3.1c)
-% Find frequency response of cascaded filter
-
-w = -pi:pi/100:pi;
-H = freqz(b, 1, w);
-
-%%
 % Pass input through filter
 
-y = conv(H,x);
+y = conv(b,x);
 
 %% 3.1d)
 % Plot output signal
 
 subplot(2,1,1)
 plot(0:39, abs(y(1:40)))
+title('Output Magnitude')
+ylabel('|y[n]|')
+xlabel('n')
 subplot(2,1,2)
 plot(0:39, angle(y(1:40)))
+title('Output Phase')
+ylabel('\angley[n]')
+xlabel('n')
+
 
 %%
 % Determine output signal by hand for n >= 5
