@@ -43,16 +43,12 @@ y = conv(b,x);
 %% 3.1d)
 % Plot output signal
 
-subplot(2,1,1)
-plot(0:39, abs(y(1:40)))
-title('Output Magnitude')
-ylabel('|y[n]|')
+plot(0:39, y(1:40))
+title('Output')
+ylabel('y[n]')
 xlabel('n')
-subplot(2,1,2)
-plot(0:39, angle(y(1:40)))
-title('Output Phase')
-ylabel('\angley[n]')
-xlabel('n')
+
+
 
 
 %%
