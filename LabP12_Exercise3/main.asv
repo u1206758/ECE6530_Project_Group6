@@ -36,15 +36,32 @@ n = [0:149];
 x = 5*cos(0.3*pi*n) + 22*cos(0.44*pi*n-pi/3) + 22*cos(0.7*pi*n-pi/4);
 
 %% 3.1c)
-% Find frequency response of cascaded filter
+% Pass input through filter
 
-w = -pi:pi/100:pi;
-H = freqz(b, 1, w);
-
-%%
-% Pass 
+y = conv(b,x);
 
 %% 3.1d)
+% Plot output signal
+
+plot(0:39, y(1:40))
+title('Output')
+ylabel('y[n]')
+xlabel('n')
+
+%%
+% Determine output signal by hand for n >= 5
+%%
+% Taking the inverse z-transform of the transfer function determined in
+% part 3.1a gives the function
+%%
+% y[n] = x[n] + (-2cos(0.7pi) - 2cos(0.44pi)))x[n-1] + (2 +
+% 4cos(0.44pi)cos(0.7pi))x[n-2] + (-2cos(0.44pi) - 2cos(0.7pi))x[n-3] +
+% x[n-4]
+%%
+% Passing the input over 5 <= n <= 40 through this function
+
+y_hand = zeros()
+
 
 %% 3.1e)
 
