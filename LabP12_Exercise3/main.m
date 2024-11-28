@@ -78,5 +78,13 @@ xlabel('n')
 legend('convolved', 'hand')
 
 %% 3.1f)
+% Our input signal is defined for n >= 0 and our filter uses past input
+% values back to x[n-4]. The start-up points at the beginning of the output
+% are the points where those past values of x[n] are undefined by the input 
+% function and assummed to be 0. The sinusoidal output seen beginning at 
+% n = 5 is when the system can be properly "filled" with past x values. 
+% Having 4 start-up values is consistent with cascading two 2nd order 
+% filters into a 4th order filter.
 
 %% 3.2
+%
