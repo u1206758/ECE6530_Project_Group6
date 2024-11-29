@@ -143,7 +143,10 @@ end
 % instructions, that the passband is inversely proportional to L.
 
 %% 3.2c)
-%
+% The L = 10 filter passes frequencies at 0.44pi +/- about 0.25. As seen in
+% part a), the magnitude of the frequency response at 0.44pi was near its
+% full amplitude while the magnitudes at 0.3pi and 0.7pi were attenuated
+% significantly.
 
 %% 3.2d)
 %

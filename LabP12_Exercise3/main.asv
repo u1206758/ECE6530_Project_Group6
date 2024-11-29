@@ -103,6 +103,11 @@ gain1 = abs(sum(b.*exp(-1*j*0.3*pi*n)))
 gain2 = abs(sum(b.*exp(-1*j*0.44*pi*n)))
 gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)))
 
+%%
+% As expected, the center frequency remains near its original amplitude and
+% frequencies far enough above and below the center frequency have been
+% attenuated significantly.
+
 %% 3.2b)
 % Plot frequency response of the filter when L = 10, 20, 40
 
@@ -130,11 +135,15 @@ passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
 end
 
 %%
-% It can be seen that the width of the passband is directly inversely
-% proportional to the 
+% Doubling the parameter L from 10, 20, 40 has halved the passband width
+% from about 0.5, 0.26, 0.135. These values are not exact because with a 
+% discrete time signal a sample may not have the exact value of the 
+% threshold and we have to pick the next closest sample to be the limits of
+% the passband. This verifies the property stated in the lab
+% instructions, that the passband is inversely proportional to L.
 
 %% 3.2c)
-%
+% The L = 10 filter passes frequencies around 0.44pi +/- 0.25. As seen in p
 
 %% 3.2d)
 %
