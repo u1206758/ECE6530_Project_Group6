@@ -86,5 +86,34 @@ legend('convolved', 'hand')
 % Having 4 start-up values is consistent with cascading two 2nd order 
 % filters into a 4th order filter.
 
-%% 3.2
+clear
+
+%% 3.2a)
+% Generate bandpass filter with w = 0.44pi
+
+L = 10;
+wc = 0.44*pi;
+n = [0:L]
+b = 2/L*cos(wc*n);
+
+%%
+% Measure gain at frequencies of interest using DTFT
+
+gain1 = abs(sum(b.*exp(-1*j*0.3*pi*n)))
+gain2 = abs(sum(b.*exp(-1*j*0.44*pi*n)))
+gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)))
+
+%% 3.2b)
+%
+
+%% 3.2c)
+%
+
+%% 3.2d)
+%
+
+%% 3.2e)
+%
+
+%% 3.2f)
 %
