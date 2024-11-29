@@ -93,7 +93,7 @@ clear
 
 L = 10;
 wc = 0.44*pi;
-n = [0:L]
+n = [0:L];
 b = 2/L*cos(wc*n);
 
 %%
@@ -103,8 +103,44 @@ gain1 = abs(sum(b.*exp(-1*j*0.3*pi*n)))
 gain2 = abs(sum(b.*exp(-1*j*0.44*pi*n)))
 gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)))
 
+%%
+% As expected, the center frequency remains near its original amplitude and
+% frequencies far enough above and below the center frequency have been
+% attenuated significantly.
+
 %% 3.2b)
-%
+% Plot frequency response of the filter when L = 10, 20, 40
+
+for L = [10 20 40]
+n = [0:L];
+b = 2/L*cos(wc*n);
+ww = -pi:pi/10000:pi;   %The number of samples here has to be quite large to find the passband limits with using a reasonable rounding
+H_mag = abs(freqz(b,1,ww)); %Frequency response of filter
+ww = 0:pi/10000:pi;      
+H_mag = H_mag(10001:end);  %Looking at positive side of frequency response
+plot(ww, H_mag)
+xlim([0 pi])
+hold on
+yline(max(H_mag)*0.707)
+yline(max(H_mag)*0.25)
+legend('Frequency Response', 'Passband', 'Stopband')
+hold off
+
+%%
+% Find passband width
+
+passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
+passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
+
+end
+
+%%
+% Doubling the parameter L from 10, 20, 40 has halved the passband width
+% from about 0.5, 0.26, 0.135. These values are not exact because with a 
+% discrete time signal a sample may not have the exact value of the 
+% threshold and we have to pick the next closest sample to be the limits of
+% the passband. This verifies the property stated in the lab
+% instructions, that the passband is inversely proportional to L.
 
 %% 3.2c)
 %

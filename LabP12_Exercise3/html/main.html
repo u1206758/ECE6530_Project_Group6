@@ -9,7 +9,7 @@ To make changes, update the MATLAB code and republish this document.
 <title>Frequency Response of FIR Filters: Lab P-12: 3 Lab Exercise</title>
 <meta name="generator" content="MATLAB 23.2">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2024-11-24">
+<meta name="DC.date" content="2024-11-28">
 <meta name="DC.source" content="main.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -101,7 +101,22 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <a href="#21">3.1f)</a>
 </li>
 <li>
-<a href="#22">3.2</a>
+<a href="#22">3.2a)</a>
+</li>
+<li>
+<a href="#24">3.2b)</a>
+</li>
+<li>
+<a href="#29">3.2c)</a>
+</li>
+<li>
+<a href="#30">3.2d)</a>
+</li>
+<li>
+<a href="#31">3.2e)</a>
+</li>
+<li>
+<a href="#32">3.2f)</a>
 </li>
 </ul>
 </div>
@@ -163,7 +178,86 @@ xlabel(<span class="string">'n'</span>)
 legend(<span class="string">'convolved'</span>, <span class="string">'hand'</span>)
 </pre>
 <img vspace="5" hspace="5" src="main_02.png" alt=""> <h2 id="21">3.1f)</h2>
-<h2 id="22">3.2</h2>
+<p>Our input signal is defined for n &gt;= 0 and our filter uses past input values back to x[n-4]. The start-up points at the beginning of the output are the points where those past values of x[n] are undefined by the input function and assummed to be 0. The sinusoidal output seen beginning at n = 5 is when the system can be properly "filled" with past x values. Having 4 start-up values is consistent with cascading two 2nd order filters into a 4th order filter.</p>
+<pre class="codeinput">clear
+</pre>
+<h2 id="22">3.2a)</h2>
+<p>Generate bandpass filter with w = 0.44pi</p>
+<pre class="codeinput">L = 10;
+wc = 0.44*pi;
+n = [0:L];
+b = 2/L*cos(wc*n);
+</pre>
+<p>Measure gain at frequencies of interest using DTFT</p>
+<pre class="codeinput">gain1 = abs(sum(b.*exp(-1*j*0.3*pi*n)))
+gain2 = abs(sum(b.*exp(-1*j*0.44*pi*n)))
+gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)))
+</pre>
+<pre class="codeoutput">
+gain1 =
+
+    0.3113
+
+
+gain2 =
+
+    1.1161
+
+
+gain3 =
+
+    0.2337
+
+</pre>
+<h2 id="24">3.2b)</h2>
+<p>Plot frequency response of the filter when L = 10, 20, 40</p>
+<pre class="codeinput">
+<span class="keyword">for</span> L = [10 20 40]
+</pre>
+<pre class="codeinput">n = [0:L];
+b = 2/L*cos(wc*n);
+ww = -pi:pi/10000:pi;   <span class="comment">%The number of samples here has to be quite large to find the passband limits with using a reasonable rounding</span>
+H_mag = abs(freqz(b,1,ww)); <span class="comment">%Frequency response of filter</span>
+ww = 0:pi/10000:pi;
+H_mag = H_mag(10001:end);  <span class="comment">%Looking at positive side of frequency response</span>
+plot(ww, H_mag)
+xlim([0 pi])
+hold <span class="string">on</span>
+yline(max(H_mag)*0.707)
+yline(max(H_mag)*0.25)
+legend(<span class="string">'Frequency Response'</span>, <span class="string">'Passband'</span>, <span class="string">'Stopband'</span>)
+hold <span class="string">off</span>
+</pre>
+<img vspace="5" hspace="5" src="main_03.png" alt=""> <img vspace="5" hspace="5" src="main_04.png" alt=""> <img vspace="5" hspace="5" src="main_05.png" alt=""> <p>Find passband width</p>
+<pre class="codeinput">passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
+passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
+</pre>
+<pre class="codeoutput">
+passband_width =
+
+    0.5080
+
+</pre>
+<pre class="codeoutput">
+passband_width =
+
+    0.2614
+
+</pre>
+<pre class="codeoutput">
+passband_width =
+
+    0.1357
+
+</pre>
+<pre class="codeinput">
+<span class="keyword">end</span>
+</pre>
+<p>Doubling the parameter L from 10, 20, 40 has halved the passband width from about 0.5, 0.26, 0.135. This verifies the property stated in the lab instructions, that the passband is inversely proportional to L.</p>
+<h2 id="29">3.2c)</h2>
+<h2 id="30">3.2d)</h2>
+<h2 id="31">3.2e)</h2>
+<h2 id="32">3.2f)</h2>
 <p class="footer">
 <br>
 <a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023b</a>
@@ -252,8 +346,73 @@ xlabel('n')
 legend('convolved', 'hand')
 
 %% 3.1f)
+% Our input signal is defined for n >= 0 and our filter uses past input
+% values back to x[n-4]. The start-up points at the beginning of the output
+% are the points where those past values of x[n] are undefined by the input 
+% function and assummed to be 0. The sinusoidal output seen beginning at 
+% n = 5 is when the system can be properly "filled" with past x values. 
+% Having 4 start-up values is consistent with cascading two 2nd order 
+% filters into a 4th order filter.
 
-%% 3.2
+clear
+
+%% 3.2a)
+% Generate bandpass filter with w = 0.44pi
+
+L = 10;
+wc = 0.44*pi;
+n = [0:L];
+b = 2/L*cos(wc*n);
+
+%%
+% Measure gain at frequencies of interest using DTFT
+
+gain1 = abs(sum(b.*exp(-1*j*0.3*pi*n)))
+gain2 = abs(sum(b.*exp(-1*j*0.44*pi*n)))
+gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)))
+
+%% 3.2b)
+% Plot frequency response of the filter when L = 10, 20, 40
+
+for L = [10 20 40]
+n = [0:L];
+b = 2/L*cos(wc*n);
+ww = -pi:pi/10000:pi;   %The number of samples here has to be quite large to find the passband limits with using a reasonable rounding
+H_mag = abs(freqz(b,1,ww)); %Frequency response of filter
+ww = 0:pi/10000:pi;      
+H_mag = H_mag(10001:end);  %Looking at positive side of frequency response
+plot(ww, H_mag)
+xlim([0 pi])
+hold on
+yline(max(H_mag)*0.707)
+yline(max(H_mag)*0.25)
+legend('Frequency Response', 'Passband', 'Stopband')
+hold off
+
+%%
+% Find passband width
+
+passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
+passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
+
+end
+
+%%
+% Doubling the parameter L from 10, 20, 40 has halved the passband width
+% from about 0.5, 0.26, 0.135. This verifies the property stated in the lab
+% instructions, that the passband is inversely proportional to L.
+
+%% 3.2c)
+%
+
+%% 3.2d)
+%
+
+%% 3.2e)
+%
+
+%% 3.2f)
+%
 ##### SOURCE END #####
 -->
 </body>
