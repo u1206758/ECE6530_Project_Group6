@@ -112,25 +112,30 @@ gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)))
 % Plot frequency response of the filter when L = 10, 20, 40
 
 for L = [10 20 40]
-n = [0:L];
-b = 2/L*cos(wc*n);
-ww = -pi:pi/10000:pi;   %The number of samples here has to be quite large to find the passband limits with using a reasonable rounding
-H_mag = abs(freqz(b,1,ww)); %Frequency response of filter
-ww = 0:pi/10000:pi;      
-H_mag = H_mag(10001:end);  %Looking at positive side of frequency response
-plot(ww, H_mag)
-xlim([0 pi])
-hold on
-yline(max(H_mag)*0.707)
-yline(max(H_mag)*0.25)
-legend('Frequency Response', 'Passband', 'Stopband')
-hold off
+  n = [0:L];
+  b = 2/L*cos(wc*n);
+  ww = -pi:pi/10000:pi;   %The number of samples here has to be quite large to find the passband limits with using a reasonable rounding
+  H_mag = abs(freqz(b,1,ww)); %Frequency response of filter
+  ww = 0:pi/10000:pi;      
+  H_mag = H_mag(10001:end);  %Looking at positive side of frequency response
+  plot(ww, H_mag)
+  xlim([0 pi])
+  xticks([0:pi/4:pi])
+  xticklabels({'0', '\pi/4', '\pi/2', '3\pi/4', '\pi'})
+  xlabel('Frequency (Rad)')
+  ylabel('Amplitude')
+  title(['L = ' num2str(L)])
+  hold on
+  yline(max(H_mag)*0.707)
+  yline(max(H_mag)*0.25)
+  legend('Frequency Response', 'Passband', 'Stopband')
+  hold off
+  snapnow
+  
+  % Find passband width
 
-%%
-% Find passband width
-
-passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
-passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
+  passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
+  passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
 
 end
 

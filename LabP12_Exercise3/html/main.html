@@ -9,7 +9,7 @@ To make changes, update the MATLAB code and republish this document.
 <title>Frequency Response of FIR Filters: Lab P-12: 3 Lab Exercise</title>
 <meta name="generator" content="MATLAB 23.2">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2024-11-28">
+<meta name="DC.date" content="2024-11-29">
 <meta name="DC.source" content="main.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -104,19 +104,19 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <a href="#22">3.2a)</a>
 </li>
 <li>
-<a href="#24">3.2b)</a>
+<a href="#25">3.2b)</a>
 </li>
 <li>
-<a href="#29">3.2c)</a>
+<a href="#27">3.2c)</a>
 </li>
 <li>
-<a href="#30">3.2d)</a>
+<a href="#28">3.2d)</a>
 </li>
 <li>
-<a href="#31">3.2e)</a>
+<a href="#29">3.2e)</a>
 </li>
 <li>
-<a href="#32">3.2f)</a>
+<a href="#30">3.2f)</a>
 </li>
 </ul>
 </div>
@@ -209,55 +209,62 @@ gain3 =
     0.2337
 
 </pre>
-<h2 id="24">3.2b)</h2>
+<p>As expected, the center frequency remains near its original amplitude and frequencies far enough above and below the center frequency have been attenuated significantly.</p>
+<h2 id="25">3.2b)</h2>
 <p>Plot frequency response of the filter when L = 10, 20, 40</p>
 <pre class="codeinput">
 <span class="keyword">for</span> L = [10 20 40]
+  n = [0:L];
+  b = 2/L*cos(wc*n);
+  ww = -pi:pi/10000:pi;   <span class="comment">%The number of samples here has to be quite large to find the passband limits with using a reasonable rounding</span>
+  H_mag = abs(freqz(b,1,ww)); <span class="comment">%Frequency response of filter</span>
+  ww = 0:pi/10000:pi;
+  H_mag = H_mag(10001:end);  <span class="comment">%Looking at positive side of frequency response</span>
+  plot(ww, H_mag)
+  xlim([0 pi])
+  xticks([0:pi/4:pi])
+  xticklabels({<span class="string">'0'</span>, <span class="string">'\pi/4'</span>, <span class="string">'\pi/2'</span>, <span class="string">'3\pi/4'</span>, <span class="string">'\pi'</span>})
+  xlabel(<span class="string">'Frequency (Rad)'</span>)
+  ylabel(<span class="string">'Amplitude'</span>)
+  title([<span class="string">'L = '</span> num2str(L)])
+  hold <span class="string">on</span>
+  yline(max(H_mag)*0.707)
+  yline(max(H_mag)*0.25)
+  legend(<span class="string">'Frequency Response'</span>, <span class="string">'Passband'</span>, <span class="string">'Stopband'</span>)
+  hold <span class="string">off</span>
+  snapnow
+
+  <span class="comment">% Find passband width</span>
+
+  passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
+  passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
+
+<span class="keyword">end</span>
 </pre>
-<pre class="codeinput">n = [0:L];
-b = 2/L*cos(wc*n);
-ww = -pi:pi/10000:pi;   <span class="comment">%The number of samples here has to be quite large to find the passband limits with using a reasonable rounding</span>
-H_mag = abs(freqz(b,1,ww)); <span class="comment">%Frequency response of filter</span>
-ww = 0:pi/10000:pi;
-H_mag = H_mag(10001:end);  <span class="comment">%Looking at positive side of frequency response</span>
-plot(ww, H_mag)
-xlim([0 pi])
-hold <span class="string">on</span>
-yline(max(H_mag)*0.707)
-yline(max(H_mag)*0.25)
-legend(<span class="string">'Frequency Response'</span>, <span class="string">'Passband'</span>, <span class="string">'Stopband'</span>)
-hold <span class="string">off</span>
-</pre>
-<img vspace="5" hspace="5" src="main_03.png" alt=""> <img vspace="5" hspace="5" src="main_04.png" alt=""> <img vspace="5" hspace="5" src="main_05.png" alt=""> <p>Find passband width</p>
-<pre class="codeinput">passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
-passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
-</pre>
-<pre class="codeoutput">
+<img vspace="5" hspace="5" src="main_03.png" alt=""> <pre class="codeoutput">
 passband_width =
 
     0.5080
 
 </pre>
-<pre class="codeoutput">
+<img vspace="5" hspace="5" src="main_04.png" alt=""> <pre class="codeoutput">
 passband_width =
 
     0.2614
 
 </pre>
-<pre class="codeoutput">
+<img vspace="5" hspace="5" src="main_05.png" alt=""> <pre class="codeoutput">
 passband_width =
 
     0.1357
 
 </pre>
-<pre class="codeinput">
-<span class="keyword">end</span>
-</pre>
-<p>Doubling the parameter L from 10, 20, 40 has halved the passband width from about 0.5, 0.26, 0.135. This verifies the property stated in the lab instructions, that the passband is inversely proportional to L.</p>
-<h2 id="29">3.2c)</h2>
-<h2 id="30">3.2d)</h2>
-<h2 id="31">3.2e)</h2>
-<h2 id="32">3.2f)</h2>
+<p>Doubling the parameter L from 10, 20, 40 has halved the passband width from about 0.5, 0.26, 0.135. These values are not exact because with a discrete time signal a sample may not have the exact value of the threshold and we have to pick the next closest sample to be the limits of the passband. This verifies the property stated in the lab instructions, that the passband is inversely proportional to L.</p>
+<h2 id="27">3.2c)</h2>
+<p>The L = 10 filter passes frequencies at 0.44pi +/- about 0.25. As seen in part a), the magnitude of the frequency response at 0.44pi was near its full amplitude while the magnitudes at 0.3pi and 0.7pi were attenuated significantly.</p>
+<h2 id="28">3.2d)</h2>
+<h2 id="29">3.2e)</h2>
+<h2 id="30">3.2f)</h2>
 <p class="footer">
 <br>
 <a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023b</a>
@@ -371,39 +378,55 @@ gain1 = abs(sum(b.*exp(-1*j*0.3*pi*n)))
 gain2 = abs(sum(b.*exp(-1*j*0.44*pi*n)))
 gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)))
 
+%%
+% As expected, the center frequency remains near its original amplitude and
+% frequencies far enough above and below the center frequency have been
+% attenuated significantly.
+
 %% 3.2b)
 % Plot frequency response of the filter when L = 10, 20, 40
 
 for L = [10 20 40]
-n = [0:L];
-b = 2/L*cos(wc*n);
-ww = -pi:pi/10000:pi;   %The number of samples here has to be quite large to find the passband limits with using a reasonable rounding
-H_mag = abs(freqz(b,1,ww)); %Frequency response of filter
-ww = 0:pi/10000:pi;      
-H_mag = H_mag(10001:end);  %Looking at positive side of frequency response
-plot(ww, H_mag)
-xlim([0 pi])
-hold on
-yline(max(H_mag)*0.707)
-yline(max(H_mag)*0.25)
-legend('Frequency Response', 'Passband', 'Stopband')
-hold off
+  n = [0:L];
+  b = 2/L*cos(wc*n);
+  ww = -pi:pi/10000:pi;   %The number of samples here has to be quite large to find the passband limits with using a reasonable rounding
+  H_mag = abs(freqz(b,1,ww)); %Frequency response of filter
+  ww = 0:pi/10000:pi;      
+  H_mag = H_mag(10001:end);  %Looking at positive side of frequency response
+  plot(ww, H_mag)
+  xlim([0 pi])
+  xticks([0:pi/4:pi])
+  xticklabels({'0', '\pi/4', '\pi/2', '3\pi/4', '\pi'})
+  xlabel('Frequency (Rad)')
+  ylabel('Amplitude')
+  title(['L = ' num2str(L)])
+  hold on
+  yline(max(H_mag)*0.707)
+  yline(max(H_mag)*0.25)
+  legend('Frequency Response', 'Passband', 'Stopband')
+  hold off
+  snapnow
+  
+  % Find passband width
 
-%%
-% Find passband width
-
-passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
-passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
+  passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
+  passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
 
 end
 
 %%
 % Doubling the parameter L from 10, 20, 40 has halved the passband width
-% from about 0.5, 0.26, 0.135. This verifies the property stated in the lab
+% from about 0.5, 0.26, 0.135. These values are not exact because with a 
+% discrete time signal a sample may not have the exact value of the 
+% threshold and we have to pick the next closest sample to be the limits of
+% the passband. This verifies the property stated in the lab
 % instructions, that the passband is inversely proportional to L.
 
 %% 3.2c)
-%
+% The L = 10 filter passes frequencies at 0.44pi +/- about 0.25. As seen in
+% part a), the magnitude of the frequency response at 0.44pi was near its
+% full amplitude while the magnitudes at 0.3pi and 0.7pi were attenuated
+% significantly.
 
 %% 3.2d)
 %
