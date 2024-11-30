@@ -179,7 +179,47 @@ passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
 
 
 %% 3.2e)
-%
+% Pass input signal from 3.1b through filter constructed in 3.2d
+
+n = [0:99];
+x = 5*cos(0.3*pi*n) + 22*cos(0.44*pi*n-pi/3) + 22*cos(0.7*pi*n-pi/4);
+y = conv(b,x);
+
+%% 
+% Plot input, output, and isolated passband frequency sinusoid for
+% comparison
+
+subplot(3,1,1)
+plot(n,x)
+title('Input sum of 3 sinusoids')
+xlabel('n')
+ylabel('Amplitude')
+subplot(3,1,2)
+plot(n,y(1:100))
+title('Output from filter')
+xlabel('n')
+ylabel('Amplitude')
+subplot(3,1,3)
+plot(n, 22*cos(0.44*pi*n-pi/3))
+title('Isolated passband frequency sinusoid component')
+xlabel('n')
+ylabel('Amplitude')
+snapnow
+
+%%
+% It can be seen that the filter output is identical to the isolated
+% passband frequency sinusoid component after the start-up points. This is
+% more apparent when comparing the frequency spectrums of the filter output 
+% and the isolated sinusoid.
+
+figure
+plot(abs(fft(y(1:100))), 'LineWidth', 1)
+hold on
+%plot(abs(fft(x)))
+plot(abs(fft(22*cos(0.44*pi*n-pi/3))))
+hold off
+title('FFT Comparison')
+legend('Filter Output', 'Isolated Sinusoid')
 
 %% 3.2f)
 %

@@ -111,7 +111,7 @@ gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)))
 %% 3.2b)
 % Plot frequency response of the filter when L = 10, 20, 40
 
-for i = 1:3
+for L = [10 20 40]
   n = [0:L];
   b = 2/L*cos(wc*n);
   ww = -pi:pi/10000:pi;   %The number of samples here has to be quite large to find the passband limits with using a reasonable rounding
@@ -120,14 +120,19 @@ for i = 1:3
   H_mag = H_mag(10001:end);  %Looking at positive side of frequency response
   plot(ww, H_mag)
   xlim([0 pi])
+  xticks([0:pi/4:pi])
+  xticklabels({'0', '\pi/4', '\pi/2', '3\pi/4', '\pi'})
+  xlabel('Frequency (Rad)')
+  ylabel('Amplitude')
+  title(['L = ' num2str(L)])
   hold on
   yline(max(H_mag)*0.707)
   yline(max(H_mag)*0.25)
   legend('Frequency Response', 'Passband', 'Stopband')
   hold off
-
-%%
-% Find passband width
+  snapnow
+  
+  % Find passband width
 
   passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
   passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
@@ -149,10 +154,71 @@ end
 % significantly.
 
 %% 3.2d)
-%
+% Tune L to attenuate |w| <= 0.3pi and 0.7pi <= |w| <= pi by at least 90%
+
+for L = 10:50
+  n = [0:L];
+  b = 2/L*cos(wc*n);
+  gain1 = abs(sum(b.*exp(-1*j*0.3*pi*n)));
+  gain2 = abs(sum(b.*exp(-1*j*0.44*pi*n)));
+  gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)));
+  if (gain1 <= 0.1) && (gain3 <= 0.1)
+    break
+  end
+end
+
+L
+gain1
+gain2
+gain3
+ww = -pi:pi/10000:pi;
+H_mag = abs(freqz(b,1,ww));
+H_mag = H_mag(10001:end); 
+passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
+passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
+
 
 %% 3.2e)
-%
+% Pass input signal from 3.1b through filter constructed in 3.2d
+
+n = [0:99];
+x = 5*cos(0.3*pi*n) + 22*cos(0.44*pi*n-pi/3) + 22*cos(0.7*pi*n-pi/4);
+y = conv(b,x);
+
+%% 
+% Plot input, output, and isolated passband frequency sinusoid for
+% comparison
+
+subplot(3,1,1)
+plot(n,x)
+title('Input sum of 3 sinusoids')
+xlabel('n')
+ylabel('Amplitude')
+subplot(3,1,2)
+plot(n,y(1:100))
+title('Output from filter')
+xlabel('n')
+ylabel('Amplitude')
+subplot(3,1,3)
+plot(n, 22*cos(0.44*pi*n-pi/3))
+title('Isolated passband frequency sinusoid component')
+xlabel('n')
+ylabel('Amplitude')
+
+%%
+% It can be seen that the filter output is identical to the isolated
+% passband frequency sinusoid component after the start-up points. This is
+% more apparent when comparing the FFT of the filter output and the
+% isolated sinusoid.
+
+plot(abs(fft(y(1:100))))
+hold on
+plot(abs(fft(22*cos(0.44*pi*n-pi/3))))
+hold off
+title('FFT Comparison')
+
+
+
 
 %% 3.2f)
 %
