@@ -154,7 +154,29 @@ end
 % significantly.
 
 %% 3.2d)
-%
+% Tune L to attenuate |w| <= 0.3pi and 0.7pi <= |w| <= pi by at least 90%
+
+for L = 10:50
+  n = [0:L];
+  b = 2/L*cos(wc*n);
+  gain1 = abs(sum(b.*exp(-1*j*0.3*pi*n)));
+  gain2 = abs(sum(b.*exp(-1*j*0.44*pi*n)));
+  gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)));
+  if (gain1 <= 0.1) && (gain3 <= 0.1)
+    break
+  end
+end
+
+L
+gain1
+gain2
+gain3
+ww = -pi:pi/10000:pi;
+H_mag = abs(freqz(b,1,ww));
+H_mag = H_mag(10001:end); 
+passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
+passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
+
 
 %% 3.2e)
 %
