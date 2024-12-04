@@ -94,14 +94,14 @@ clear
 L = 10;
 wc = 0.44*pi;
 n = [0:L];
-b = 2/L*cos(wc*n);
+filt = 2/L*cos(wc*n);
 
 %%
 % Measure gain at frequencies of interest using DTFT
 
-gain1 = abs(sum(b.*exp(-1*j*0.3*pi*n)))
-gain2 = abs(sum(b.*exp(-1*j*0.44*pi*n)))
-gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)))
+gain1 = abs(sum(filt.*exp(-1*j*0.3*pi*n)))
+gain2 = abs(sum(filt.*exp(-1*j*0.44*pi*n)))
+gain3 = abs(sum(filt.*exp(-1*j*0.7*pi*n)))
 
 %%
 % As expected, the center frequency remains near its original amplitude and
@@ -113,9 +113,9 @@ gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)))
 
 for L = [10 20 40]
   n = [0:L];
-  b = 2/L*cos(wc*n);
+  filt = 2/L*cos(wc*n);
   ww = -pi:pi/10000:pi;   %The number of samples here has to be quite large to find the passband limits with using a reasonable rounding
-  H_mag = abs(freqz(b,1,ww)); %Frequency response of filter
+  H_mag = abs(freqz(filt,1,ww)); %Frequency response of filter
   ww = 0:pi/10000:pi;      
   H_mag = H_mag(10001:end);  %Looking at positive side of frequency response
   plot(ww, H_mag)
@@ -158,10 +158,10 @@ end
 
 for L = 10:50
   n = [0:L];
-  b = 2/L*cos(wc*n);
-  gain1 = abs(sum(b.*exp(-1*j*0.3*pi*n)));
-  gain2 = abs(sum(b.*exp(-1*j*0.44*pi*n)));
-  gain3 = abs(sum(b.*exp(-1*j*0.7*pi*n)));
+  filt = 2/L*cos(wc*n);
+  gain1 = abs(sum(filt.*exp(-1*j*0.3*pi*n)));
+  gain2 = abs(sum(filt.*exp(-1*j*0.44*pi*n)));
+  gain3 = abs(sum(filt.*exp(-1*j*0.7*pi*n)));
   if (gain1 <= 0.1) && (gain3 <= 0.1)
     break
   end
@@ -172,7 +172,7 @@ gain1
 gain2
 gain3
 ww = -pi:pi/10000:pi;
-H_mag = abs(freqz(b,1,ww));
+H_mag = abs(freqz(filt,1,ww));
 H_mag = H_mag(10001:end); 
 passband_limits = find(round(H_mag,2)==round(max(H_mag)*0.707,2));
 passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
@@ -183,7 +183,7 @@ passband_width = ww(max(passband_limits)) - ww(min(passband_limits))
 
 n = [0:99];
 x = 5*cos(0.3*pi*n) + 22*cos(0.44*pi*n-pi/3) + 22*cos(0.7*pi*n-pi/4);
-y = conv(b,x);
+y = conv(filt,x);
 
 %% 
 % Plot input, output, and isolated passband frequency sinusoid for
@@ -209,17 +209,49 @@ snapnow
 %%
 % It can be seen that the filter output is identical to the isolated
 % passband frequency sinusoid component after the start-up points. This is
-% more apparent when comparing the frequency spectrums of the filter output 
-% and the isolated sinusoid.
+% more apparent when comparing the frequency spectrums of the filter input 
+% and output.
 
+f = 0:pi/50:pi;
+X = fft(x);
+Y = fft(y(1:100));
 figure
-plot(abs(fft(y(1:100))), 'LineWidth', 1)
-hold on
-%plot(abs(fft(x)))
-plot(abs(fft(22*cos(0.44*pi*n-pi/3))))
-hold off
-title('FFT Comparison')
-legend('Filter Output', 'Isolated Sinusoid')
+subplot(2,1,1)
+plot(f, abs(X(1:51)))
+title('Input')
+xlim([0 pi])
+xticks([0:pi/4:pi])
+xticklabels({'0', '\pi/4', '\pi/2', '3\pi/4', '\pi'})
+xlabel('Frequency (Rad)')
+ylabel('Amplitude')
+subplot(2,1,2)
+plot(f, abs(Y(1:51)))
+title('Output')
+xlim([0 pi])
+xticks([0:pi/4:pi])
+xticklabels({'0', '\pi/4', '\pi/2', '3\pi/4', '\pi'})
+xlabel('Frequency (Rad)')
+ylabel('Amplitude')
+  
 
 %% 3.2f)
-%
+% Plotting frequency response of filter output again
+
+Y = fft(y(1:100));
+figure
+plot(0:pi/50:pi, abs(Y(1:51)))
+title('Frequency Response of Filter Output')
+xlim([0 pi])
+xticks([0:pi/4:pi])
+xticklabels({'0', '\pi/4', '\pi/2', '3\pi/4', '\pi'})
+xlabel('Frequency (Rad)')
+ylabel('Amplitude')
+  
+
+%%
+% The amplitude of H(e^jw) corresponds to the relative size of a sinusoid
+% at that frequency. It can be seen in the output from the filter where the
+% signal is present mostly at 0.44pi. For some sinusoid composed of 
+% components of the formx[n] = A*cos(wn) and its DFT X[k], the magnitude 
+% of X[k] corresponds to the relative amplitude of x[n] and will have peaks
+% at each w proportional to A.
