@@ -126,7 +126,7 @@ for L = [10 20 40]
   ylabel('Amplitude')
   title(['L = ' num2str(L)])
   hold on
-  yline(max(H_mag)*0.707)
+  yline(max(H_mag)*0.707, 'Color',[0 256 0])
   yline(max(H_mag)*0.25)
   legend('Frequency Response', 'Passband', 'Stopband')
   hold off
@@ -217,20 +217,41 @@ X = fft(x);
 Y = fft(y(1:100));
 figure
 subplot(2,1,1)
-
-subplot(2,1,2)
-
 plot(f, abs(X(1:51)))
-title('FFT Comparison')
-legend('Filter Output', 'Isolated Sinusoid')
+title('Input')
+xlim([0 pi])
+xticks([0:pi/4:pi])
+xticklabels({'0', '\pi/4', '\pi/2', '3\pi/4', '\pi'})
+xlabel('Frequency (Rad)')
+ylabel('Amplitude')
+subplot(2,1,2)
+plot(f, abs(Y(1:51)))
+title('Output')
+xlim([0 pi])
+xticks([0:pi/4:pi])
+xticklabels({'0', '\pi/4', '\pi/2', '3\pi/4', '\pi'})
+xlabel('Frequency (Rad)')
+ylabel('Amplitude')
+  
 
 %% 3.2f)
 % Plotting frequency response of filter output again
-H = fft(y(1:100));
-plot(0:pi/50:pi, abs(H(1:51)))
+
+Y = fft(y(1:100));
+figure
+plot(0:pi/50:pi, abs(Y(1:51)))
+title('Frequency Response of Filter Output')
+xlim([0 pi])
+xticks([0:pi/4:pi])
+xticklabels({'0', '\pi/4', '\pi/2', '3\pi/4', '\pi'})
+xlabel('Frequency (Rad)')
+ylabel('Amplitude')
+  
 
 %%
 % The amplitude of H(e^jw) corresponds to the relative size of a sinusoid
-% at that frequency. I
-% The greater the amplitude of H means more of that frequency in the
-% signal. (MATH HERE)
+% at that frequency. It can be seen in the output from the filter where the
+% signal is present mostly at 0.44pi. For some sinusoid composed of 
+% components of the formx[n] = A*cos(wn) and its DFT X[k], the magnitude 
+% of X[k] corresponds to the relative amplitude of x[n] and will have peaks
+% at each w proportional to A.

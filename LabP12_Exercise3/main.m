@@ -126,8 +126,8 @@ for L = [10 20 40]
   ylabel('Amplitude')
   title(['L = ' num2str(L)])
   hold on
-  yline(max(H_mag)*0.707)
-  yline(max(H_mag)*0.25)
+  yline(max(H_mag)*0.707, 'Color', [0 1 0])
+  yline(max(H_mag)*0.25, 'Color', [1, 0, 0])
   legend('Frequency Response', 'Passband', 'Stopband')
   hold off
   snapnow
